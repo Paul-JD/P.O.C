@@ -5,7 +5,6 @@ import requests
 url = "https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20230405-154703/valeursfoncieres-2018.txt"
 s = requests.get(url).content
 c = pd.read_csv(io.StringIO(s.decode('utf-8')), sep='|')
-# c = pd.read_csv(filepath_or_buffer="Current_Data_File/understand.csv", sep=",")
 
 # Suppression des colonnes ne donnant pas d'information importante après
 # lecture de la documentation
