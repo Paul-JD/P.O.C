@@ -1,12 +1,12 @@
 from collections import Counter
 from threading import Thread
 import pandas as pd
+from pandas import DataFrame
 
 
-class My_thread(Thread):
-    def __init__(self, id, dataset, colonnes):
-        super(My_thread, self).__init__()
-        self.id = id
+class MyThread(Thread):
+    def __init__(self, dataset: DataFrame, colonnes: list):
+        super(MyThread, self).__init__()
         self.dataset = dataset
         self.colonnes = colonnes
         self.retour = pd.DataFrame()

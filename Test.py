@@ -1,13 +1,12 @@
 import gzip
 import io
-from collections import Counter
-from threading import Thread
 import time
+
 import numpy as np
 import pandas as pd
 import requests
 
-from My_thread import My_thread
+from Utility.MyThread import MyThread
 
 url = "https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz"
 req = requests.get(url)
@@ -40,7 +39,6 @@ dataset = df[['id_mutation',
 # Passage de la colonnes date mutation en datetime puis en seconde pour avoir des int
 dataset.loc[:, 'date_mutation'] = pd.to_datetime(dataset['date_mutation'], format='mixed')
 dataset.loc[:, 'date_mutation'] = dataset['date_mutation'].apply(lambda x: x.timestamp())
-
 # Remplissage des valeurs NaN nature_mutation et labelisation
 dataset.loc[:, 'nature_mutation'] = dataset.nature_mutation.fillna("")
 
@@ -89,31 +87,40 @@ Nom_colonnes_from_dataset = [
     'latitude'
 ]
 
-colonnes = Nom_colonnes_from_dataset + classe_liste_code_type_local + classe_liste_prefixe_voie + classe_liste_nature_mutation + classe_liste_code_culture + classe_liste_code_culture_spe
+colonnes = (Nom_colonnes_from_dataset
+            + classe_liste_code_type_local
+            + classe_liste_prefixe_voie
+            + classe_liste_nature_mutation
+            + classe_liste_code_culture
+            + classe_liste_code_culture_spe)
 colonnes = np.array(colonnes)
-del classe_liste_nature_mutation, classe_liste_code_type_local, classe_liste_prefixe_voie, classe_liste_code_culture, classe_liste_code_culture_spe
+del classe_liste_nature_mutation, (
+    classe_liste_code_type_local), (
+    classe_liste_prefixe_voie), (
+    classe_liste_code_culture), (
+    classe_liste_code_culture_spe)
 
-test = dataset.loc[0:100000]
+test = dataset.loc[0:10]
 
 list_id_mutation = list(dict.fromkeys(test.id_mutation.values))
 
-th_liste = list(range(len(list_id_mutation)))
+th_liste: list[range | MyThread] = list(range(len(list_id_mutation)))
 Data = pd.DataFrame()
 
 t1 = time.time()
 for i, id in enumerate(list_id_mutation):
     tmp = test.loc[test.id_mutation == id, :]
-    th_liste[i]: My_thread = My_thread(id, tmp, colonnes)
+    th_liste[i]: MyThread = MyThread(tmp, colonnes)
     th_liste[i].start()
     test = test.drop(test[test.id_mutation == id].index)
 
-while len(th_liste) != 0:
-    th_liste[0].join()
-    Data = pd.concat([Data, th_liste[0].retour], axis=0)
-    del th_liste[0]
+list_pandas = []
+for j in range(len(list_id_mutation)):
+    th_liste[j].join()
+    list_pandas.append(th_liste[j].retour)
+Data = pd.concat(list_pandas, ignore_index=True, axis=0)
 
 Data = Data.fillna(0)
-print(t1-time.time())
+print(time.time()-t1)
 
-
-Data.to_csv(path_or_buf='C:/Users/dargo/Files_clean/data_set_clean.csv', sep=',', index=False)
+Data.to_csv(path_or_buf='C:/Users/dargo/Files_clean/2018_data_set_clean.csv', sep=',', index=False)
