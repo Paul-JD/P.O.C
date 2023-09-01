@@ -1,6 +1,11 @@
 STEP 1 : validation data brut
+
 STEP 2 : Cleaning
+
 STEP 3 : Storage in Blob
+
 STEP 4 : Importation fichier et entrainement
+
 STEP 5 : Contenairisation du modele
+
 STEP 6 : API
