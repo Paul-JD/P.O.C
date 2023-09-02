@@ -23,5 +23,6 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest Utility/test_data_cleaning_function.py
-          pytest Utility/test_import_data.py
+          cd Utility
+          pytest test_data_cleaning_function.py
+          pytest test_import_data.py
