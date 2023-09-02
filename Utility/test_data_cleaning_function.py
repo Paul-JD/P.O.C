@@ -21,7 +21,7 @@ def test_check_columns():
 def test_download_data():
     url1 = "http://nimportquoi.hh"
     url2 = "https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz"
-    url3 = 'Data_Files/ABREVIATION_VOIE.csv'
+    url3 = '../Data_Files/ABREVIATION_VOIE.csv'
     url4 = 'test/importe_quoi.csv'
 
     # WEB url
