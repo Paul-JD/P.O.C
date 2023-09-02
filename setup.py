@@ -2,10 +2,10 @@ from setuptools import setup
 
 setup(
     name='pythonProjectPOC',
-    version='',
+    version='0.1',
     packages=['Utility'],
-    url='',
-    license='',
+    url='#',
+    license='MIT',
     author='dargo',
     author_email='',
     description=''

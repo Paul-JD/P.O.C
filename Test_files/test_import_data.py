@@ -1,13 +1,13 @@
 from collections import Counter
 
-from Utility.Get_dataset_clean_function import download_data, check_columns
+from Utility import Get_dataset_clean_function
 
 
 # Verification que les valeurs présentes dans le dataset du modele sont bien présentes
 # Et que la qualité de certains champs est bien correct
 
 def test_colonne_in_df():
-    df = download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+    df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
     columns_use_in_model = ['id_mutation',
                             'date_mutation',
                             'nature_mutation',
@@ -26,17 +26,15 @@ def test_colonne_in_df():
                             'longitude',
                             'latitude'
                             ]
-    assert check_columns(df, columns_use_in_model) is True
+    assert Get_dataset_clean_function.check_columns(df, columns_use_in_model) is True
 
 
 # Verify every id as one 'valeur_fonciere' and one 'date_ime'
 def test_valeur_fonciere_in_df():
-    df = download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+    df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
     df.dropna(subset=['valeur_fonciere'], inplace=True)
-    test_id_value_date = df.loc[:, ['id_mutation', 'date_mutation', 'valeur_fonciere']]
-
-    list_id = list(dict.fromkeys(test_id_value_date.id_mutation.values))
     test_ter = df.loc[0:1000, ['id_mutation', 'valeur_fonciere', 'date_mutation']]
+    list_id = list(dict.fromkeys(test_ter .id_mutation.values))
     for i in list_id:
         assert len(Counter(test_ter.loc[test_ter.id_mutation == i, 'valeur_fonciere'])) == 1
         assert len(Counter(test_ter.loc[test_ter.id_mutation == i, 'date_mutation'])) == 1
