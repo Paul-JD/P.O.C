@@ -168,5 +168,4 @@ def main_cleaning(url) -> None:
 
     dataset_for_model.to_csv(path_or_buf='C:/Users/dargo/Files_clean/2018_data_set_clean.csv', sep=',', index=False)
 
-
-#main_cleaning('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+# main_cleaning('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
