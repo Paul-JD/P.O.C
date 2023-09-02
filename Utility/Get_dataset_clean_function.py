@@ -6,7 +6,7 @@ import pandas as pd
 import requests
 from pandas import DataFrame
 
-from Utility.MyThread import MyThread
+from Utility import MyThread
 
 
 def download_data(url: str) -> DataFrame:
@@ -169,4 +169,4 @@ def main_cleaning(url) -> None:
     dataset_for_model.to_csv(path_or_buf='C:/Users/dargo/Files_clean/2018_data_set_clean.csv', sep=',', index=False)
 
 
-main_cleaning('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+#main_cleaning('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')

@@ -1,10 +1,7 @@
-import sys
-sys.path.append('../Utility')
-
 import pandas as pd
 from pandas import DataFrame
 
-from Utility.Get_dataset_clean_function import check_columns, download_data, create_street_codex, data_for_model
+from Utility.Get_dataset_clean_function import check_columns, download_data, create_street_codex
 
 
 # Test file of the data import from the url link

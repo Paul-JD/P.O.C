@@ -1,6 +1,6 @@
 from collections import Counter
 
-from Get_dataset_clean_function import download_data, check_columns
+from Utility.Get_dataset_clean_function import download_data, check_columns
 
 
 # Verification que les valeurs présentes dans le dataset du modele sont bien présentes
