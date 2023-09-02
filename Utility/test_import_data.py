@@ -1,8 +1,5 @@
 from collections import Counter
-import sys
-import os
-sys.path.append(os.path.abspath("../Utility"))
-from Utility import Get_dataset_clean_function
+import Get_dataset_clean_function
 
 
 # Verification que les valeurs présentes dans le dataset du modele sont bien présentes
