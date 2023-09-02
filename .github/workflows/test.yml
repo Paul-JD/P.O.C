@@ -3,7 +3,7 @@ name: run test
 on: push
 
 jobs:
-  build:
+  Test:
     permissions: write-all
     runs-on: windows-latest
     steps:
@@ -21,8 +21,12 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Test with pytest
+      - name: Test function
         run: |
           cd Utility
           pytest test_data_cleaning_function.py
+
+      - name: Test Data
+        run : |
+          cd Utility
           pytest test_import_data.py
