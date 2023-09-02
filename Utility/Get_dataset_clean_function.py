@@ -1,9 +1,12 @@
 import gzip
 import io
+
 import numpy as np
 import pandas as pd
 import requests
+from azure.storage.blob import BlobServiceClient
 from pandas import DataFrame
+
 import MyThread
 
 
@@ -91,8 +94,35 @@ def data_for_model(data: DataFrame, model_data_columns) -> DataFrame:
     return pd.concat(list_pandas, ignore_index=True, axis=0).fillna(0)
 
 
-def import_data_in_blob(data: DataFrame) -> DataFrame:
-    return data
+def import_data_in_blob(data: DataFrame, year: int) -> None:
+    connection_string = ('DefaultEndpointsProtocol=https;AccountName=pauljrd;AccountKey=j3Cii5z6+5TDrvCTqnJ74'
+                         '+itjPAUcVPFHNEYr7Q6Utcb9vV/qy80gfv7RCnck94MSWJhjxeSKCGL+ASt0csQyQ==;EndpointSuffix=core'
+                         '.windows.net')
+
+    storage_account_name = 'pauljrd'
+    container_name = 'filestorage'
+
+    file = data.to_csv(encoding='utf-8')
+    filename = 'Data_for_model_' + str(year) + '.csv'
+    blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=filename)
+    blob_client.upload_blob(file)
+
+
+def download_data_from_blob(year: int):
+    blob_name = 'Data_for_model_' + str(int) + '.csv'
+    connection_string = ('DefaultEndpointsProtocol=https;AccountName=pauljrd;AccountKey=j3Cii5z6+5TDrvCTqnJ74'
+                         '+itjPAUcVPFHNEYr7Q6Utcb9vV/qy80gfv7RCnck94MSWJhjxeSKCGL+ASt0csQyQ==;EndpointSuffix=core'
+                         '.windows.net')
+    container_name = 'filestorage'
+    blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
+    # encoding param is necessary for readall() to return str, otherwise it returns bytes
+    downloader = blob_client.download_blob(max_concurrency=1, encoding='UTF-8')
+    blob_text = downloader.readall()
+    df = pd.read_csv(io.StringIO(blob_text), sep=',')
+    return df
 
 
 def main_cleaning(url) -> None:

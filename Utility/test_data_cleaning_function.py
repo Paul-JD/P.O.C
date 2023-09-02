@@ -42,6 +42,3 @@ def test_street_codex():
     assert result_list == Get_dataset_clean_function.create_street_codex(street_list_1, street_short)
     assert [] == Get_dataset_clean_function.create_street_codex(street_list_2, street_short)
 
-
-def test_import_data_in_blob():
-    pass
