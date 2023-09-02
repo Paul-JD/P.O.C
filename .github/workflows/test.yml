@@ -1,6 +1,6 @@
 name: run test
 
-on: workflow_call
+on: push
 
 jobs:
   build:
