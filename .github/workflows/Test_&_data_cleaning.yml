@@ -7,6 +7,9 @@ jobs:
     permissions: write-all
     runs-on: windows-latest
     steps:
+      - name: checkout repo content
+        uses: actions/checkout@v3
+
       - name: setup python
         uses: actions/setup-python@v3
         with:
