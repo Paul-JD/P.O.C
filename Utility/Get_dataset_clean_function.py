@@ -7,7 +7,7 @@ import requests
 from azure.storage.blob import BlobClient
 from pandas import DataFrame
 
-from Utility import MyThread
+import MyThread
 
 
 def download_data(url: str) -> DataFrame:
