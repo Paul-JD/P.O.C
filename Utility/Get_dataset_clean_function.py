@@ -136,7 +136,7 @@ def main_cleaning(url) -> None:
     # suppression valeur fonciere nulle
     df.dropna(subset=['valeur_fonciere'], inplace=True)
     df.dropna(subset=['longitude', 'latitude'], inplace=True)
-
+    df.drop(df[df['valeure_fonciere']<100000].index, inplace=True)
     # Selection des colonnes utiles
     dataset = df[['id_mutation',
                   'date_mutation',
