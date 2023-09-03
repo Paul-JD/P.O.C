@@ -197,6 +197,6 @@ def main_cleaning(url) -> None:
         classe_liste_code_culture), (
         classe_liste_code_culture_spe)
 
-    dataset_for_model = data_for_model(dataset, colonnes)
+    dataset_for_model = data_for_model(dataset.loc[0:100000, :], colonnes)
 
     import_data_in_blob(dataset_for_model, year)
