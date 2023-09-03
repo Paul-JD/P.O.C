@@ -23,7 +23,7 @@ def test_check_columns():
 
 def test_download_data():
     url1 = "http://nimportquoi.hh"
-    url2 = "https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz"
+    url2 = "https://files.data.gouv.fr/geo-dvf/latest/csv/2022/full.csv.gz"
     url3 = 'Data_Files/ABREVIATION_VOIE.csv'
     url4 = 'test/importe_quoi.csv'
 
@@ -37,7 +37,7 @@ def test_download_data():
 
 
 def test_street_codex():
-    street_short = Get_dataset_clean_function.download_data('Data_Files/ABREVIATION_VOIE.csv').values
+    street_short = Get_dataset_clean_function.download_data_from_blob('ABREVIATION_VOIE.csv').values
     street_list_1 = ['RUE SACLAY', 'AV FOCH', '', 'LA HAVANE', 'SQ DU HAMEAU']
     street_list_2 = []
     result_list = ['RUE', 'AV', 'OTHER', 'OTHER', 'SQ']

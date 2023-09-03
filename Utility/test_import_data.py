@@ -6,7 +6,7 @@ import random
 # Et que la qualité de certains champs est bien correct
 
 def test_colonne_in_df():
-    df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+    df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2022/full.csv.gz')
     columns_use_in_model = ['id_mutation',
                             'date_mutation',
                             'nature_mutation',
@@ -30,7 +30,7 @@ def test_colonne_in_df():
 
 # Verify every id as one 'valeur_fonciere' and one 'date_ime'
 def test_valeur_fonciere_in_df():
-    df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+    df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2022/full.csv.gz')
     df.dropna(subset=['valeur_fonciere'], inplace=True)
     test_ter = df.loc[:, ['id_mutation', 'valeur_fonciere', 'date_mutation']]
     list_id = list(dict.fromkeys(test_ter .id_mutation.values))
