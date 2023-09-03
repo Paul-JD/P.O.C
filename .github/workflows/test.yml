@@ -20,11 +20,11 @@ jobs:
 
       - name: Test function
         run: |
-          pytest Utility/test_data_cleaning_function.py
+          pytest test_data_cleaning_function.py
 
       - name: Test Data
         run : |
-          pytest Utility/test_import_data.py
+          pytest test_import_data.py
 
 
   DataCleaning:
