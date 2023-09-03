@@ -27,6 +27,7 @@ jobs:
 
 
   DataCleaning:
+    needs: Test
     permissions: write-all
     runs-on: windows-latest
     steps:
