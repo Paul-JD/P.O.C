@@ -7,7 +7,7 @@ import requests
 from azure.storage.blob import BlobServiceClient
 from pandas import DataFrame
 
-import MyThread
+from Utility import MyThread
 
 
 def download_data(url: str) -> DataFrame:
@@ -47,7 +47,7 @@ def cleaning_before_threading(dataset) -> DataFrame:
     # Remplissage des valeurs NaN nature_mutation et labelisation
     dataset.loc[:, 'nature_mutation'] = dataset.nature_mutation.fillna("")
     dataset.loc[:, 'adresse_nom_voie'] = dataset.adresse_nom_voie.fillna("")
-    abrv_voie = download_data('../Data_Files/ABREVIATION_VOIE.csv').values
+    abrv_voie = download_data_from_blob('ABREVIATION_VOIE.csv').values
     codex_voie = create_street_codex(dataset.adresse_nom_voie.values, abrv_voie)
 
     dataset.loc[:, 'prefixe_voie'] = codex_voie
@@ -78,11 +78,11 @@ def create_street_codex(street_list, street_short) -> list:
 
 def data_for_model(data: DataFrame, model_data_columns) -> DataFrame:
     list_id = list(dict.fromkeys(data.id_mutation.values))
-    thread_list: list[range | MyThread] = list(range(len(list_id)))
+    thread_list = list(range(len(list_id)))
 
     for i, id_mutation in enumerate(list_id):
         tmp = data.loc[data.id_mutation == id_mutation, :]
-        thread_list[i]: [MyThread] = MyThread(tmp, model_data_columns)
+        thread_list[i] = MyThread.MyThread(tmp, model_data_columns)
         thread_list[i].start()
         data = data.drop(data[data.id_mutation == id_mutation].index)
 
@@ -106,11 +106,11 @@ def import_data_in_blob(data: DataFrame, year: int) -> None:
     filename = 'Data_for_model_' + str(year) + '.csv'
     blob_service_client = BlobServiceClient.from_connection_string(connection_string)
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=filename)
-    blob_client.upload_blob(file)
+    blob_client.upload_blob(file, overwrite = True)
 
 
-def download_data_from_blob(year: int):
-    blob_name = 'Data_for_model_' + str(int) + '.csv'
+def download_data_from_blob(blob_name: str)->DataFrame:
+
     connection_string = ('DefaultEndpointsProtocol=https;AccountName=pauljrd;AccountKey=j3Cii5z6+5TDrvCTqnJ74'
                          '+itjPAUcVPFHNEYr7Q6Utcb9vV/qy80gfv7RCnck94MSWJhjxeSKCGL+ASt0csQyQ==;EndpointSuffix=core'
                          '.windows.net')
@@ -127,7 +127,7 @@ def download_data_from_blob(year: int):
 
 def main_cleaning(url) -> None:
     df = download_data(url)
-
+    year = int(url.split('/')[-2])
     # suppression valeur fonciere nulle
     df.dropna(subset=['valeur_fonciere'], inplace=True)
     df.dropna(subset=['longitude', 'latitude'], inplace=True)
@@ -159,12 +159,12 @@ def main_cleaning(url) -> None:
     classe_liste_nature_mutation = list(dict.fromkeys(dataset.nature_mutation.to_list()))
     classe_liste_code_type_local = list(dict.fromkeys(dataset.type_local.to_list()))
     classe_liste_prefixe_voie = list(dict.fromkeys(dataset.prefixe_voie))
-    classe_liste_code_culture = download_data('../Data_Files/CODE_CULTURE.csv')
+    classe_liste_code_culture = download_data_from_blob('CODE_CULTURE.csv')
     classe_liste_code_culture = list(classe_liste_code_culture['Code_nature_culture'].to_dict().values())
-    classe_liste_code_culture_spe = download_data('../Data_Files/CODE_CULTURE_SPECIALE.csv')
+    classe_liste_code_culture_spe = download_data_from_blob('CODE_CULTURE_SPECIALE.csv')
     classe_liste_code_culture_spe = list(classe_liste_code_culture_spe['CODE_CULTURE_SPECIALE'].to_dict().values())
 
-    Nom_colonnes_from_dataset = [
+    nom_colonnes_from_dataset = [
         'date_mutation',
         'code_postal',
         'code_commune',
@@ -178,7 +178,7 @@ def main_cleaning(url) -> None:
         'latitude'
     ]
 
-    colonnes = (Nom_colonnes_from_dataset
+    colonnes = (nom_colonnes_from_dataset
                 + classe_liste_code_type_local
                 + classe_liste_prefixe_voie
                 + classe_liste_nature_mutation
@@ -194,6 +194,4 @@ def main_cleaning(url) -> None:
 
     dataset_for_model = data_for_model(dataset.loc[0:100], colonnes)
 
-    dataset_for_model.to_csv(path_or_buf='C:/Users/dargo/Files_clean/2018_data_set_clean.csv', sep=',', index=False)
-
-# main_cleaning('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
+    import_data_in_blob(dataset_for_model, year)

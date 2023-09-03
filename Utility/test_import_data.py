@@ -1,6 +1,6 @@
 from collections import Counter
 import Get_dataset_clean_function
-
+import random
 
 # Verification que les valeurs présentes dans le dataset du modele sont bien présentes
 # Et que la qualité de certains champs est bien correct
@@ -32,8 +32,9 @@ def test_colonne_in_df():
 def test_valeur_fonciere_in_df():
     df = Get_dataset_clean_function.download_data('https://files.data.gouv.fr/geo-dvf/latest/csv/2018/full.csv.gz')
     df.dropna(subset=['valeur_fonciere'], inplace=True)
-    test_ter = df.loc[0:1000, ['id_mutation', 'valeur_fonciere', 'date_mutation']]
+    test_ter = df.loc[:, ['id_mutation', 'valeur_fonciere', 'date_mutation']]
     list_id = list(dict.fromkeys(test_ter .id_mutation.values))
-    for i in list_id:
+    random.shuffle(list_id)
+    for i in list_id[0:1000]:
         assert len(Counter(test_ter.loc[test_ter.id_mutation == i, 'valeur_fonciere'])) == 1
         assert len(Counter(test_ter.loc[test_ter.id_mutation == i, 'date_mutation'])) == 1

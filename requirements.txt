@@ -3,3 +3,4 @@ pandas~=2.1.0rc0
 requests~=2.31.0
 pytest~=7.4.0
 Azure==4.0.0
+azure-storage-blob

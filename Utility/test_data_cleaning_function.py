@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pandas as pd
 from pandas import DataFrame
+
 import Get_dataset_clean_function
 
 
@@ -24,13 +27,13 @@ def test_download_data():
     url3 = 'Data_Files/ABREVIATION_VOIE.csv'
     url4 = 'test/importe_quoi.csv'
 
-    # WEB url
-    assert Get_dataset_clean_function.download_data(url1) is None
-    assert type(Get_dataset_clean_function.download_data(url2)) == DataFrame
-
     # Filepath
     assert Get_dataset_clean_function.download_data(url4) is None
     assert type(Get_dataset_clean_function.download_data(url3)) == DataFrame
+
+    # WEB url
+    assert Get_dataset_clean_function.download_data(url1) is None
+    assert type(Get_dataset_clean_function.download_data(url2)) == DataFrame
 
 
 def test_street_codex():
@@ -41,4 +44,3 @@ def test_street_codex():
 
     assert result_list == Get_dataset_clean_function.create_street_codex(street_list_1, street_short)
     assert [] == Get_dataset_clean_function.create_street_codex(street_list_2, street_short)
-

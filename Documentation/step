@@ -1,11 +1,15 @@
-STEP 1 : validation data brut
+STEP 1 : validation data brut - done
 
-STEP 2 : Cleaning
+STEP 2 : Cleaning - done
 
-STEP 3 : Storage in Blob
+STEP 3 : Storage in Blob - done
 
-STEP 4 : Importation fichier et entrainement
+STEP 4 : Automatisation
 
-STEP 5 : Contenairisation du modele
+STEP 5 : Entrainement modele
 
-STEP 6 : API
+STEP 6 : Contenairisation du modele
+
+STEP 7 : API
+
+STEP 8 : Automatisation globale

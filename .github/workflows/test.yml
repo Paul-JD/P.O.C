@@ -28,3 +28,24 @@ jobs:
       - name: Test Data
         run : |
           pytest Utility/test_import_data.py
+
+  DataCleaning:
+    permissions: write-all
+    runs-on: windows-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v3
+
+      - name: setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11.1'
+
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Upload on Azure
+        run: |
+          python Dataset_creation.py
