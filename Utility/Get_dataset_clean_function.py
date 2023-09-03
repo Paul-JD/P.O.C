@@ -4,7 +4,7 @@ import io
 import numpy as np
 import pandas as pd
 import requests
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobClient
 from pandas import DataFrame
 
 from Utility import MyThread
@@ -102,22 +102,27 @@ def import_data_in_blob(data: DataFrame, year: int) -> None:
     storage_account_name = 'pauljrd'
     container_name = 'filestorage'
 
+    blob_client = BlobClient.from_connection_string(
+        conn_str=connection_string,
+        container_name=container_name,
+        blob_name='data_for_model_' + str(year) + '.csv')
+
     file = data.to_csv(encoding='utf-8')
     filename = 'Data_for_model_' + str(year) + '.csv'
-    blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=filename)
-    blob_client.upload_blob(file, overwrite = True)
+    blob_client.upload_blob(file, overwrite=True)
 
 
-def download_data_from_blob(blob_name: str)->DataFrame:
-
+def download_data_from_blob(blob_name: str) -> DataFrame:
     connection_string = ('DefaultEndpointsProtocol=https;AccountName=pauljrd;AccountKey=j3Cii5z6+5TDrvCTqnJ74'
                          '+itjPAUcVPFHNEYr7Q6Utcb9vV/qy80gfv7RCnck94MSWJhjxeSKCGL+ASt0csQyQ==;EndpointSuffix=core'
                          '.windows.net')
     container_name = 'filestorage'
-    blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
-    blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
+    blob_client = BlobClient.from_connection_string(
+        conn_str=connection_string,
+        container_name=container_name,
+        blob_name=blob_name)
+
     # encoding param is necessary for readall() to return str, otherwise it returns bytes
     downloader = blob_client.download_blob(max_concurrency=1, encoding='UTF-8')
     blob_text = downloader.readall()
