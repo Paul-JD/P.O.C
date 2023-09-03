@@ -29,8 +29,9 @@ jobs:
         run : |
           pytest Utility/test_import_data.py
 
+
   DataCleaning:
-    needs: Test 
+    needs: Test
     permissions: write-all
     runs-on: windows-latest
     steps:
