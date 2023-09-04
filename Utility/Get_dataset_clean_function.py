@@ -130,14 +130,15 @@ def download_data_from_blob(blob_name: str) -> DataFrame:
     return df
 
 
-def main_cleaning(url) -> None:
+def main_cleaning(year, departement:list) -> None:
+    url = 'https://files.data.gouv.fr/geo-dvf/latest/csv/'+str(year)+'/full.csv.gz'
     df = download_data(url)
-    year = int(url.split('/')[-2])
+
     # suppression valeur fonciere nulle
     df.dropna(subset=['valeur_fonciere'], inplace=True)
     df.dropna(subset=['longitude', 'latitude'], inplace=True)
     df.drop(df[df['valeur_fonciere']<100000].index, inplace=True)
-    df = df.loc[df.loc[df['code_departement'].isin([75, 77, 78, 91, 92, 93, 94, 95])].index, :]
+    df = df.loc[df.loc[df['code_departement'].isin(departement  )].index, :]
     # Selection des colonnes utiles
     dataset = df[['id_mutation',
                   'date_mutation',
