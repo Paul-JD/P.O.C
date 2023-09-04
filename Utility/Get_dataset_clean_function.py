@@ -44,20 +44,25 @@ def cleaning_before_threading(dataset) -> DataFrame:
     # Passage de la colonnes date mutation en datetime puis en seconde pour avoir des int
     dataset.loc[:, 'date_mutation'] = pd.to_datetime(dataset['date_mutation'], format='mixed')
     dataset.loc[:, 'date_mutation'] = dataset['date_mutation'].apply(lambda x: x.timestamp())
+
     # Remplissage des valeurs NaN nature_mutation et labelisation
     dataset.loc[:, 'nature_mutation'] = dataset.nature_mutation.fillna("")
     dataset.loc[:, 'adresse_nom_voie'] = dataset.adresse_nom_voie.fillna("")
+
+    # Validation prefixe des VOIES
     abrv_voie = download_data_from_blob('ABREVIATION_VOIE.csv').values
     codex_voie = create_street_codex(dataset.adresse_nom_voie.values, abrv_voie)
-
     dataset.loc[:, 'prefixe_voie'] = codex_voie
+
     dataset.loc[:, 'code_postal'] = dataset.code_postal.fillna(0)
     dataset.loc[:, 'surface_reelle_bati'] = dataset.surface_reelle_bati.fillna(0)
     dataset.loc[:, 'surface_terrain'] = dataset.surface_terrain.fillna(0)
     dataset.loc[:, 'type_local'] = dataset.type_local.fillna('Autre')
     dataset.loc[:, 'nombre_pieces_principales'] = dataset.nombre_pieces_principales.fillna(0)
-    dataset.loc[:, 'code_nature_culture'] = dataset.code_nature_culture.fillna("")
-    dataset.loc[:, 'code_nature_culture_speciale'] = dataset.code_nature_culture_speciale.fillna("")
+    dataset.loc[:, 'lot1_surface_carrez'] = dataset.lot1_surface_carrez.fillna(0)
+    dataset.loc[:, 'lot2_surface_carrez'] = dataset.lot2_surface_carrez.fillna(0)
+    dataset.loc[:, 'lot3_surface_carrez'] = dataset.lot3_surface_carrez.fillna(0)
+    dataset.loc[:, 'lot4_surface_carrez'] = dataset.lot4_surface_carrez.fillna(0)
 
     return dataset
 
@@ -89,8 +94,9 @@ def data_for_model(data: DataFrame, model_data_columns) -> DataFrame:
     list_pandas = []
     for j in range(len(list_id)):
         thread_list[j].join()
-        list_pandas.append(thread_list[j].retour)
-
+        if thread_list[j].retour is not None:
+            print(1)
+            list_pandas.append(thread_list[j].retour)
     return pd.concat(list_pandas, ignore_index=True, axis=0).fillna(0)
 
 
@@ -130,29 +136,43 @@ def download_data_from_blob(blob_name: str) -> DataFrame:
     return df
 
 
-def main_cleaning(year, departement:list) -> None:
-    url = 'https://files.data.gouv.fr/geo-dvf/latest/csv/'+str(year)+'/full.csv.gz'
+def main_cleaning(year, departement: list) -> None:
+    url = 'https://files.data.gouv.fr/geo-dvf/latest/csv/' + str(year) + '/full.csv.gz'
     df = download_data(url)
 
     # suppression valeur fonciere nulle
     df.dropna(subset=['valeur_fonciere'], inplace=True)
+
+    # suppression des doublons
+    df.drop_duplicates(inplace=True)
+
+    # suppression des emplacements geolocalisations
     df.dropna(subset=['longitude', 'latitude'], inplace=True)
-    df.drop(df[df['valeur_fonciere']<100000].index, inplace=True)
-    df = df.loc[df.loc[df['code_departement'].isin(departement  )].index, :]
+
+    # suppression des valeurs foncieres inférieur à 100 000 Euros
+    df.drop(df[df['valeur_fonciere'] < 100000].index, inplace=True)
+
+    # selection du departement
+    df = df.loc[df.loc[df['code_departement'].isin(departement)].index, :]
+
+    # selection maison et appartement
+    df = df.loc[df.loc[df['code_type_local'].isin([1, 2])].index, :]
+    print(df)
+
     # Selection des colonnes utiles
     dataset = df[['id_mutation',
                   'date_mutation',
                   'nature_mutation',
                   'adresse_nom_voie',
                   'code_postal',
-                  'code_commune',
-                  'code_departement',
                   'nombre_lots',
+                  'lot1_surface_carrez',
+                  'lot2_surface_carrez',
+                  'lot3_surface_carrez',
+                  'lot4_surface_carrez',
                   'type_local',
                   'surface_reelle_bati',
                   'nombre_pieces_principales',
-                  'code_nature_culture',
-                  'code_nature_culture_speciale',
                   'surface_terrain',
                   'valeur_fonciere',
                   'longitude',
@@ -166,10 +186,6 @@ def main_cleaning(year, departement:list) -> None:
     classe_liste_nature_mutation = list(dict.fromkeys(dataset.nature_mutation.to_list()))
     classe_liste_code_type_local = list(dict.fromkeys(dataset.type_local.to_list()))
     classe_liste_prefixe_voie = list(dict.fromkeys(dataset.prefixe_voie))
-    classe_liste_code_culture = download_data_from_blob('CODE_CULTURE.csv')
-    classe_liste_code_culture = list(classe_liste_code_culture['Code_nature_culture'].to_dict().values())
-    classe_liste_code_culture_spe = download_data_from_blob('CODE_CULTURE_SPECIALE.csv')
-    classe_liste_code_culture_spe = list(classe_liste_code_culture_spe['CODE_CULTURE_SPECIALE'].to_dict().values())
 
     nom_colonnes_from_dataset = [
         'date_mutation',
@@ -188,17 +204,12 @@ def main_cleaning(year, departement:list) -> None:
     colonnes = (nom_colonnes_from_dataset
                 + classe_liste_code_type_local
                 + classe_liste_prefixe_voie
-                + classe_liste_nature_mutation
-                + classe_liste_code_culture
-                + classe_liste_code_culture_spe)
+                + classe_liste_nature_mutation)
 
     colonnes = np.array(colonnes)
     del classe_liste_nature_mutation, (
         classe_liste_code_type_local), (
-        classe_liste_prefixe_voie), (
-        classe_liste_code_culture), (
-        classe_liste_code_culture_spe)
+        classe_liste_prefixe_voie)
 
     dataset_for_model = data_for_model(dataset, colonnes)
-
     import_data_in_blob(dataset_for_model, year)
