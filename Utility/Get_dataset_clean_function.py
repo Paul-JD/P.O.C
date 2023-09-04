@@ -137,6 +137,7 @@ def main_cleaning(url) -> None:
     df.dropna(subset=['valeur_fonciere'], inplace=True)
     df.dropna(subset=['longitude', 'latitude'], inplace=True)
     df.drop(df[df['valeur_fonciere']<100000].index, inplace=True)
+    df = df.loc[df.loc[df['code_departement'].isin([75, 77, 78, 91, 92, 93, 94, 95])].index, :]
     # Selection des colonnes utiles
     dataset = df[['id_mutation',
                   'date_mutation',
