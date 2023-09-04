@@ -157,7 +157,7 @@ def main_cleaning(year, departement: list) -> None:
 
     # selection maison et appartement
     df = df.loc[df.loc[df['code_type_local'].isin([1, 2])].index, :]
-    print(df)
+    df.reset_index(drop=True, inplace=True)
 
     # Selection des colonnes utiles
     dataset = df[['id_mutation',
@@ -180,7 +180,7 @@ def main_cleaning(year, departement: list) -> None:
                   ]]
 
     dataset = cleaning_before_threading(dataset)
-
+    print(df)
     # Recuperation données pour construction modele ml
 
     classe_liste_nature_mutation = list(dict.fromkeys(dataset.nature_mutation.to_list()))
@@ -190,8 +190,6 @@ def main_cleaning(year, departement: list) -> None:
     nom_colonnes_from_dataset = [
         'date_mutation',
         'code_postal',
-        'code_commune',
-        'code_departement',
         'nombre_lots',
         'surface_reelle_bati',
         'nombre_pieces_principales',
@@ -212,4 +210,5 @@ def main_cleaning(year, departement: list) -> None:
         classe_liste_prefixe_voie)
 
     dataset_for_model = data_for_model(dataset, colonnes)
+    print(dataset_for_model)
     import_data_in_blob(dataset_for_model, year)

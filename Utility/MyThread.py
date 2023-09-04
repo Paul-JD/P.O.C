@@ -19,8 +19,6 @@ class MyThread(Thread):
 
         tmp_dict['date_mutation'] = [tmp_dataset.loc[index, 'date_mutation']]
         tmp_dict['code_postal'] = [tmp_dataset.loc[index, 'code_postal']]
-        tmp_dict['code_commune'] = [tmp_dataset.loc[index, 'code_commune']]
-        tmp_dict['code_departement'] = [tmp_dataset.loc[index, 'code_departement']]
         tmp_dict['nombre_lots'] = [tmp_dataset.loc[index, 'nombre_lots'].sum()]
 
         tmp_dict['nombre_pieces_principales'] = [tmp_dataset.loc[index, 'nombre_pieces_principales'].sum()]
