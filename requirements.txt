@@ -3,3 +3,6 @@ pandas~=2.1.0rc0
 requests~=2.31.0
 pytest~=7.4.0
 azure-storage-blob
+scikit-learn~=1.2.0
+flask~=2.3.3
+jsonify~=0.5
