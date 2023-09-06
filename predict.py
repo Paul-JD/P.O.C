@@ -2,18 +2,20 @@ import pickle
 
 import pandas as pd
 from flask import Flask, request, jsonify
+from Utility.Get_dataset_clean_function import download_data_from_blob
 
-with open('Utility/model_C.bin', 'rb') as f_in:
-    model = pickle.load(f_in)
+m = download_data_from_blob('model_C.bin','modelstorage')
+print(type(m))
+print(m)
+model = pickle.load(m)
 
 app = Flask('Appartement')
 
 
 @app.route('/predict', methods=['POST'])
 def predict():
-
-    X = request.get_json()
-    appartement = pd.DataFrame(X,index=[0])
+    x = request.get_json()
+    appartement = pd.DataFrame(x, index=[0])
     result = model.predict(appartement)[0]
     retour = {
         'prediction': result

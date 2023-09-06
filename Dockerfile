@@ -10,7 +10,11 @@ RUN pip install -r requirements.txt
 
 RUN pip install gunicorn
 
-COPY ["Utility","predict.py","./" ]
+COPY ["predict.py","./" ]
+
+RUN mkdir "Utility"
+
+COPY ["Utility","./Utility"]
 
 EXPOSE 9696
 
