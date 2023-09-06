@@ -5,8 +5,6 @@ from flask import Flask, request, jsonify
 from Utility.Get_dataset_clean_function import download_data_from_blob
 
 m = download_data_from_blob('model_C.bin','modelstorage')
-print(type(m))
-print(m)
 model = pickle.load(m)
 
 app = Flask('Appartement')
