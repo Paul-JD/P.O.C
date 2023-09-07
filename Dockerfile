@@ -12,6 +12,8 @@ RUN pip install gunicorn
 
 COPY ["predict.py","./" ]
 
+COPY ["model_C.bin","./"]
+
 RUN mkdir "Utility"
 
 COPY ["Utility","./Utility"]

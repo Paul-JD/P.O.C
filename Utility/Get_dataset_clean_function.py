@@ -107,7 +107,7 @@ def data_for_model(data: DataFrame, model_data_columns) -> DataFrame:
 
 
 # Upload du dataset pour le modele depuis un container Azure Blob, en spécifiant l'annee.
-def upload_data_in_blob(data: DataFrame | bytes, year: int, container_name) -> None:
+def upload_data_in_blob(data, year: int, container_name) -> None:
     connection_string = ('DefaultEndpointsProtocol=https;AccountName=pauljrd;AccountKey=j3Cii5z6+5TDrvCTqnJ74'
                          '+itjPAUcVPFHNEYr7Q6Utcb9vV/qy80gfv7RCnck94MSWJhjxeSKCGL+ASt0csQyQ==;EndpointSuffix=core'
                          '.windows.net')
@@ -132,7 +132,7 @@ def upload_data_in_blob(data: DataFrame | bytes, year: int, container_name) -> N
 
 
 # Telechargement d'un container Blob.
-def download_data_from_blob(blob_name: str, container_name: str) -> DataFrame | bytes:
+def download_data_from_blob(blob_name: str, container_name: str):
     # lien vers Azure file Storage
     connection_string = ('DefaultEndpointsProtocol=https;AccountName=pauljrd;AccountKey=j3Cii5z6+5TDrvCTqnJ74'
                          '+itjPAUcVPFHNEYr7Q6Utcb9vV/qy80gfv7RCnck94MSWJhjxeSKCGL+ASt0csQyQ==;EndpointSuffix=core'

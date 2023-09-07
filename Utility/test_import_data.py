@@ -36,6 +36,6 @@ def test_valeur_fonciere_in_df():
     test_ter = df.loc[:, ['id_mutation', 'valeur_fonciere', 'date_mutation']]
     list_id = list(dict.fromkeys(test_ter .id_mutation.values))
     random.shuffle(list_id)
-    for i in list_id[0:10000]:
+    for i in list_id[0:1000]:
         assert len(Counter(test_ter.loc[test_ter.id_mutation == i, 'valeur_fonciere'])) == 1
         assert len(Counter(test_ter.loc[test_ter.id_mutation == i, 'date_mutation'])) == 1

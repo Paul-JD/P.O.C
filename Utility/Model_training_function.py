@@ -49,5 +49,10 @@ def model_training() -> None:
     y_pred = forest.predict(x_test)
     get_confusion_matrix(y_pred, y_test)
 
+
     test = pickle.dumps(forest)
     upload_data_in_blob(test, 2022, 'modelstorage')
+
+    #output = 'model_C.bin'
+    #with open(output,'wb') as f_out:
+    #    pickle.dump(forest,f_out)
